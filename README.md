@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/d909fef2-ca94-4711-abd7-c2027dfc6fa9)
+![image](https://github.com/user-attachments/assets/01d0aeff-a8bd-4b87-bd1c-1a44386a4a3c)
+
 # Telegram Бот: Управление инвестициями  
 
 Данный проект представляет Telegram-бота, который помогает пользователям управлять инвестициями. Бот позволяет выбирать инвестиционные стратегии, просматривать Dashboard и оставлять отзывы.  
