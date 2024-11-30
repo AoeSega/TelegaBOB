@@ -37,32 +37,83 @@ menu_500_plus.add(KeyboardButton("Autodesk Inc. за 291,9$ 5шт"))
 menu_500_plus.add(KeyboardButton("Informatica Corporation за 48,73$ 15шт"))
 menu_500_plus.add(KeyboardButton("PRA Group Inc за 21,2$ 30шт"))
 
+# Хранилище состояний для возврата назад
+user_states = {}
 
-# Начало общения с ботом
+
+# Команда /start
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
+    user_states[message.from_user.id] = 'main_menu'
     await message.answer("Выберите один из вариантов ниже", reply_markup=main_menu)
 
 
-# Реакция на Главное меню
+# Команда /help
+@dp.message_handler(commands=['help'])
+async def help_command(message: types.Message):
+    help_text = (
+        "/start - Вернуться к начальному окну/запустить бота\n"
+        "/cancel - Отмена текущего диалога\n"
+        "/help - Список доступных команд\n"
+        "/dash - Ссылка на Dashboard\n"
+        "/back - Вернуться к прошлому пункту"
+    )
+    await message.answer(help_text)
+
+
+# Команда /cancel
+@dp.message_handler(commands=['cancel'])
+async def cancel_command(message: types.Message):
+    user_states.pop(message.from_user.id, None)
+    await message.answer("Диалог отменен. Чтобы начать заново, используйте /start.", reply_markup=main_menu)
+
+
+# Команда /dash
+@dp.message_handler(commands=['dash'])
+async def dash_command(message: types.Message):
+    await message.answer("Ссылка на Dashboard: ССЫЛКА ДАШ")
+
+
+# Команда /back
+@dp.message_handler(commands=['back'])
+async def back_command(message: types.Message):
+    user_id = message.from_user.id
+    prev_state = user_states.get(user_id, 'main_menu')
+
+    if prev_state == 'main_menu':
+        await message.answer("Вы уже в главном меню.", reply_markup=main_menu)
+    elif prev_state == 'choose_budget':
+        user_states[user_id] = 'main_menu'
+        await message.answer("Каков ваш бюджет?", reply_markup=budget_menu)
+    elif prev_state in ['menu_50_100', 'menu_100_500', 'menu_500_plus']:
+        user_states[user_id] = 'choose_budget'
+        await message.answer("Выберите один из вариантов ниже", reply_markup=budget_menu)
+
+
+# Реакция на главное меню
 @dp.message_handler(lambda message: message.text == "Хочу получить стратегию")
 async def choose_budget(message: types.Message):
+    user_states[message.from_user.id] = 'choose_budget'
     await message.answer("Каков ваш бюджет?", reply_markup=budget_menu)
 
 
 @dp.message_handler(lambda message: message.text == "Посмотреть DashBoard")
 async def show_dashboard(message: types.Message):
-    await message.answer("Ссылка на Dashboard: ВСТАВЬ ССЫЛКУ ДАШБОРД")
+    await message.answer("Ссылка на Dashboard: ССЫЛКА ДАШ")
 
 
 # Реакция на выбор бюджета
 @dp.message_handler(lambda message: message.text in ["50-100$", "100-500$", "500$ и более"])
 async def choose_stock(message: types.Message):
+    user_id = message.from_user.id
     if message.text == "50-100$":
+        user_states[user_id] = 'menu_50_100'
         await message.answer("Выберите один из вариантов ниже", reply_markup=menu_50_100)
     elif message.text == "100-500$":
+        user_states[user_id] = 'menu_100_500'
         await message.answer("Выберите один из вариантов ниже", reply_markup=menu_100_500)
     elif message.text == "500$ и более":
+        user_states[user_id] = 'menu_500_plus'
         await message.answer("Выберите один из вариантов ниже", reply_markup=menu_500_plus)
 
 
@@ -79,7 +130,8 @@ async def choose_stock(message: types.Message):
     "PRA Group Inc за 21,2$ 30шт",
 ])
 async def strategy_created(message: types.Message):
-    await message.answer("Стратегия успешно создана. В ближайшее время с вами свяжется специалист для более точной информации.")
+    await message.answer(
+        "Стратегия успешно создана. В ближайшее время с вами свяжется специалист для более точной информации.")
     await message.answer("Пожалуйста, оставьте отзыв")
 
 
@@ -91,4 +143,3 @@ async def handle_feedback(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
-
