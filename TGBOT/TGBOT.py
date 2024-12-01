@@ -99,7 +99,7 @@ async def choose_budget(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == "Посмотреть DashBoard")
 async def show_dashboard(message: types.Message):
-    await message.answer("Ссылка на Dashboard: ССЫЛКА ДАШ")
+    await message.answer("Ссылка на Dashboard: http://127.0.0.1:8050/")
 
 
 # Реакция на выбор бюджета
