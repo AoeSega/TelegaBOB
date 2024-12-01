@@ -90,7 +90,7 @@ python bot.py
 - **Изменение ссылки на Dashboard**:  
   В файле `bot.py` замените строку:  
   ```python
-  "Ссылка на Dashboard: [ССЫЛКА DashBoard](http://127.0.0.1:8050/)"
+  "Ссылка на Dashboard: [ССЫЛКА DashBoard]"
   ```  
   на актуальную ссылку.  
 
